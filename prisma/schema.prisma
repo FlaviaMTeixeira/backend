@@ -10,49 +10,111 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario{
-  id_usuario String @id @default(uuid())
-  email String @db.VarChar(60) @unique
-  data_nascimento DateTime @db.Date
-  sexo String @db.VarChar(1)
-  nome String @db.VarChar(60)
-  senha String @db.VarChar(8)
-  tipo_usuario String @db.VarChar(20)
+model Usuario {
+  id_usuario      String        @id @default(uuid())
+  email           String        @unique @db.VarChar(60)
+  data_nascimento DateTime      @db.Date
+  sexo            String        @db.VarChar(1)
+  nome            String        @db.VarChar(60)
+  senha           String        @db.VarChar(8)
+  tipo_usuario    String        @db.VarChar(20)
+  avaliacao       Avaliacao[]
+  minha_lista     Minha_lista[]
 
   @@map("usuario")
 }
 
-// model Avaliacao{
-//   conteudo String @db.VarChar(256)
-//   nota Int
+model Minha_lista {
+  id_minha_lista Int            @id @default(autoincrement())
+  nome           String         @db.VarChar(45)
+  usuario        Usuario?       @relation(fields: [id_usuario], references: [id_usuario])
+  id_usuario     String?
+  lista_livros   Lista_livros[]
 
-//   @@map("avaliacao")
-// }
-
-model Livro {
-  id_livro Int @id @default(autoincrement())
-  titulo String @db.VarChar(60)
-  sinopse String @db.VarChar(1024)
-  caminho_arquivo String @db.VarChar(2048)
-  capa String @db.VarChar(2048)
-  editora String @db.VarChar(45)
-  idioma String @db.VarChar(45)
-  ano Int @db.Year
-
-  @@map("livro")
+  @@map("minha_lista")
 }
 
-model Autor{
-  id_autor Int @id @default(autoincrement())
-  nome String @db.VarChar(60)
-  data_nasc DateTime @db.Date
-  data_falesc DateTime @db.Date
+model Lista_livros {
+  minha_lista    Minha_lista? @relation(fields: [id_minha_lista], references: [id_minha_lista])
+  id_minha_lista Int
+  livros         Livros?      @relation(fields: [id_livro], references: [id_livro])
+  id_livro       Int
+
+  @@id([id_minha_lista, id_livro])
+  @@map("lista_livros")
+}
+
+model Avaliacao {
+  conteudo   String  @db.VarChar(256)
+  livro      Livros  @relation(fields: [id_livro], references: [id_livro])
+  id_livro   Int
+  usuario    Usuario @relation(fields: [id_usuario], references: [id_usuario])
+  id_usuario String
+
+  @@id([id_livro, id_usuario])
+  @@map("avaliacao")
+}
+
+model Livros {
+  id_livro        Int            @id @default(autoincrement())
+  titulo          String         @db.VarChar(60)
+  sinopse         String         @db.VarChar(1024)
+  caminho_arquivo String         @db.VarChar(2048)
+  capa            String         @db.VarChar(2048)
+  editora         String         @db.VarChar(45)
+  idioma          String         @db.VarChar(45)
+  ano             Int            @db.Year
+  Avaliacao       Avaliacao[]
+  liv_aut         Liv_aut[]
+  Gen_liv         Gen_liv[]
+  lista_livro     Lista_livros[]
+
+  @@map("livros")
+}
+
+model Autor {
+  id_autor       Int              @id @default(autoincrement())
+  nome           String           @db.VarChar(60)
+  data_nasc      DateTime         @db.Date
+  data_falesc    DateTime         @db.Date
   nascionalidade Nascionalidade[]
+  liv_aut        Liv_aut[]
+
   @@map("autor")
 }
 
-model Nascionalidade{
-  id_nascionalidade Int @id @default(autoincrement())
-  descricao String @db.VarChar(65)
-  autor Autor @relation(fields: [id_nascionalidade],references: [id_autor])
+model Liv_aut {
+  livro    Livros @relation(fields: [id_livro], references: [id_livro])
+  id_livro Int    @map("livroId")
+  autor    Autor  @relation(fields: [id_autor], references: [id_autor])
+  id_autor Int    @map("autorId")
+
+  @@id([id_livro, id_autor])
+  @@map("liv_aut")
+}
+
+model Gen_liv {
+  livro     Livros @relation(fields: [id_livro], references: [id_livro])
+  id_livro  Int    @map("livroId")
+  genero    Genero @relation(fields: [id_genero], references: [id_genero])
+  id_genero Int    @map("generoId")
+
+  @@id([id_livro, id_genero])
+  @@map("gen_liv")
+}
+
+model Genero {
+  id_genero Int       @id @default(autoincrement())
+  nome      String    @db.VarChar(45)
+  Gen_liv   Gen_liv[]
+
+  @@map("genero")
+}
+
+model Nascionalidade {
+  id_nascionalidade Int    @id @default(autoincrement())
+  descricao         String @db.VarChar(65)
+  autor             Autor  @relation(fields: [id_nascionalidade], references: [id_autor])
+
+  @@map("nascionalidade")
 }
