@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario{
+  id_usuario String @id @default(uuid())
+  email String @db.VarChar(60) @unique
+  data_nascimento DateTime @db.Date
+  sexo String @db.VarChar(1)
+  nome String @db.VarChar(60)
+  senha String @db.VarChar(8)
+  tipo_usuario String @db.VarChar(20)
+
+  @@map("usuario")
+}
+
+// model Avaliacao{
+//   conteudo String @db.VarChar(256)
+//   nota Int
+
+//   @@map("avaliacao")
+// }
+
+model Livro {
+  id_livro Int @id @default(autoincrement())
+  titulo String @db.VarChar(60)
+  sinopse String @db.VarChar(1024)
+  caminho_arquivo String @db.VarChar(2048)
+  capa String @db.VarChar(2048)
+  editora String @db.VarChar(45)
+  idioma String @db.VarChar(45)
+  ano Int @db.Year
+
+  @@map("livro")
+}
+
+model Autor{
+  id_autor Int @id @default(autoincrement())
+  nome String @db.VarChar(60)
+  data_nasc DateTime @db.Date
+  data_falesc DateTime @db.Date
+  nascionalidade Nascionalidade[]
+  @@map("autor")
+}
+
+model Nascionalidade{
+  id_nascionalidade Int @id @default(autoincrement())
+  descricao String @db.VarChar(65)
+  autor Autor @relation(fields: [id_nascionalidade],references: [id_autor])
+}
