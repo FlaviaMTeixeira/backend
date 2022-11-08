@@ -1,7 +1,8 @@
-import { Request, Response, Router } from "express";
-import UsuarioController from "../controllers/UsuarioController";
-const router = Router();
+import { rotaUsuarios } from "./usuarios.routes";
+import { Router } from "express";
 
-router.post('/usuarios',UsuarioController.store)
+const routes = Router()
 
-export  {router as rotaUsuario} ;
+routes.use("/usuarios",rotaUsuarios)
+
+export {routes};

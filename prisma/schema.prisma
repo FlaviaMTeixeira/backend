@@ -16,8 +16,8 @@ model Usuario {
   data_nascimento DateTime      @db.Date
   sexo            String        @db.VarChar(1)
   nome            String        @db.VarChar(60)
-  senha           String        @db.VarChar(8)
-  tipo_usuario    String        @db.VarChar(20)
+  senha           String        
+  isAdmin         Boolean
   avaliacao       Avaliacao[]
   minha_lista     Minha_lista[]
 

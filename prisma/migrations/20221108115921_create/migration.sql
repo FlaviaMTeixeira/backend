@@ -6,7 +6,7 @@ CREATE TABLE `usuario` (
     `sexo` VARCHAR(1) NOT NULL,
     `nome` VARCHAR(60) NOT NULL,
     `senha` VARCHAR(8) NOT NULL,
-    `tipo_usuario` VARCHAR(20) NOT NULL,
+    `isAdmin` BOOLEAN NOT NULL,
 
     UNIQUE INDEX `usuario_email_key`(`email`),
     PRIMARY KEY (`id_usuario`)
